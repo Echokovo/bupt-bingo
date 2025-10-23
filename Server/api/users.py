@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.post("/login", response_model=UserLoginResponse)
-# @limiter.limit("5/minute")
+@limiter.limit("500/minute")
 def student_login(request: Request, login: UserLoginRequest, db: Session = Depends(get_db)):
     """学号姓名登录接口"""
     student_id = login.student_id

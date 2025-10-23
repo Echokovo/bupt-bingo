@@ -24,13 +24,13 @@ def generate_random_strings(file_path):
         if len(row) < 2:  # 检查当前行是否至少有2列
             continue
         col2_value = row[1].value
+        col3_value = row[2].value
         if not col2_value:
             continue
-        
         # 创建社团
         if get_club_by_name(db, club_name=col2_value):
             continue  # 社团已存在则跳过
-        club = create_club(db, club_name=col2_value, club_type=0)
+        club = create_club(db, club_name=col2_value, club_type=col3_value)
         print(f"创建社团: id={club.id}, name={club.club_name}")
         
         # 生成3个邀请码
@@ -41,9 +41,7 @@ def generate_random_strings(file_path):
             row_invite_codes.append(random_str)
             create_invite_code(db, code=random_str, role=1, club_id=club.id)
         
-        # 关键修改：通过行号+列号定位第三列（column=3，Excel列A=1，B=2，C=3）
-        # 即使原行没有第三列，也会自动创建单元格
-        third_col_cell = sheet.cell(row=row_num, column=3)
+        third_col_cell = sheet.cell(row=row_num, column=4)
         third_col_cell.value = ",".join(row_invite_codes)
     
     # 生成管理员邀请码（不写入Excel）
@@ -58,5 +56,5 @@ def generate_random_strings(file_path):
     db.close()
 
 if __name__ == "__main__":
-    file_path = "附件3 参与社团名单.xlsx"
+    file_path = "参与社团名单.xlsx"
     generate_random_strings(file_path)

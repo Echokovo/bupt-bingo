@@ -28,10 +28,6 @@
             <span class="value">{{ verifyResult.userInfo.studentId }}</span>
           </div>
           <div class="info-item">
-            <span class="label">姓名</span>
-            <span class="value">{{ verifyResult.userInfo.name }}</span>
-          </div>
-          <div class="info-item">
             <span class="label">奖品编号</span>
             <span class="value reward-level">{{ verifyResult.rewardLevel }} 号</span>
           </div>
