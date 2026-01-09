@@ -1,1 +1,1 @@
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --access-logfile /www/bupt-bingo/logs/access.log --error-logfile /www/bupt-bingo/logs/error.log --log-level info

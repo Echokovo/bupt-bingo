@@ -5,9 +5,38 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BUPT Bingo</title>
+    <style>
+      .footer-beian {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 12px;
+        color: #999;
+        line-height: 1.6;
+      }
+      .footer-beian a {
+        color: #999;
+        text-decoration: none;
+        margin: 0 4px;
+      }
+      .footer-beian a:hover {
+        text-decoration: underline;
+      }
+      .police-icon {
+        height: 16px;
+        vertical-align: middle;
+        margin-right: 3px;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    <div class="footer-beian">
+      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">京ICP备2025148358号-1</a> |
+      <a href="https://beian.mps.gov.cn/#/query/webSearch?code=11011402054853" target="_blank" rel="noopener noreferrer">
+        <img src="./public/image/备案图标.png" alt="公安备案图标" class="police-icon" />
+        京公网安备11011402054853号
+      </a>
+    </div>
   </body>
 </html>

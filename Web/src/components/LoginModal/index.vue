@@ -15,6 +15,12 @@
         :rules="[{ required: true, message: '请填写学号' }]"
       />
     </van-form>
+
+    <!-- 提示信息 -->
+    <div style="padding: 0 16px; font-size: 12px; color: #969799; line-height: 1.5;">
+      <p>⚠️ 领奖时需要认证身份，请务必使用正确的学号登录。</p>
+      <p>🙏 求求了，不要再爆破了，服务器受不了的…</p>
+    </div>
   </van-dialog>
 </template>
 
