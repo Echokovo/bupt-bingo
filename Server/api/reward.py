@@ -68,7 +68,7 @@ def verify_reward_qrcode(
     # 获取用户信息
     user = get_user_by_student_id(db, award.user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=f"用户未找到 请重新注册")
 
     # 标记为已验证
     verify_award_token(db, award.id)

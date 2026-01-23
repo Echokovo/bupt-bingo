@@ -2,15 +2,15 @@ import os
 import openpyxl
 import random
 from crud.invite_code import create_invite_code
-from crud.club import create_club, get_club_by_name
+from crud.club import create_club
 from database import SessionLocal, Base, engine
 
 os.environ.setdefault('DATABASE_URL', 'sqlite:////www/bupt-bingo/Server/bingo.db')
 
-def init_invite_code(file_path):
+def init_club(file_path):
     """
     输入的 Excel 文件应包含社团名单（社工摊位也算作一个社团），第一行为表头，第一列为序号，第二列为社团名称，第三列为社团类型（是否为五佳十优社团）（0 或 1）
-    该函数将在第四列生成对应社团的3个普通邀请码，并输出10个管理员邀请码（不写入Excel）
+    该函数将为每个社团创建社团记录
     """
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
@@ -23,30 +23,16 @@ def init_invite_code(file_path):
     for row in sheet.iter_rows(min_row=2):
         if len(row) < 3:  # 检查当前行是否至少有3列
             continue
-        print(row[0].value, row[1].value)  # 打印第一列、第二列内容
+        print(row[0].value, row[1].value, row[2].value)  # 打印第一列、第二列和第三列内容
         col2_value = row[1].value
+        col3_value = row[2].value
         if not col2_value:
             continue
-        club = get_club_by_name(db, club_name=col2_value)
+        if not col3_value:
+            continue
+        # 创建社团
+        club = create_club(db, club_name=col2_value, club_type=col3_value)
         print(f"创建社团: id={club.id}, name={club.club_name}")
-        
-        # 生成3个邀请码
-        row_invite_codes = []
-        for _ in range(3):
-            random_num = random.randint(0, 9999)
-            random_str = f"{col2_value}{random_num:04d}"
-            row_invite_codes.append(random_str)
-            create_invite_code(db, code=random_str, role=1, club_id=club.id)
-        
-        third_col_cell = sheet.cell(row=row_num, column=4)
-        third_col_cell.value = ",".join(row_invite_codes)
-    
-    # 生成管理员邀请码（不写入Excel）
-    for num in random.sample(range(1000, 10000), 10):
-        random_str = f"admin{num:04d}"
-        create_invite_code(db, code=random_str, role=2, club_id=None)
-        print(f"生成管理员邀请码: {random_str}")
-    
     # 保存并关闭
     workbook.save(file_path)
     workbook.close()
@@ -54,4 +40,4 @@ def init_invite_code(file_path):
 
 if __name__ == "__main__":
     file_path = "参与社团名单.xlsx"
-    init_invite_code(file_path)
+    init_club(file_path)

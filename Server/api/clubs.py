@@ -26,6 +26,8 @@ def refresh_club_qrcode(
     """刷新社团二维码（社团成员）"""
     # 检查用户是否关联了社团
     user = get_user_by_student_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"用户未找到 请重新注册")
     club_id = user.club_id
     if not club_id:
         raise HTTPException(status_code=400, detail="User not associated with any club")
@@ -53,22 +55,25 @@ def scan_club_qrcode(
 ):
     """扫描社团二维码获取积分（普通用户）"""
     token = scan.qrcodeToken
+    user = get_user_by_student_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"用户未找到 请重新注册")
 
     # 验证token有效性
     qrcode_token = get_valid_unused_token(db, token)
     if not qrcode_token:
-        raise HTTPException(status_code=400, detail="Invalid or expired QR code")
+        raise HTTPException(status_code=400, detail="二维码不合法或过期")
     club_id = qrcode_token.club_id
     qrcode_id = qrcode_token.id
 
     user_scan = get_by_user_id_and_club_id(db, user_id, club_id)
     if user_scan:
-        raise HTTPException(status_code=400, detail="User already scanned")
+        raise HTTPException(status_code=400, detail="该社团你已经扫过了噢")
 
     # 获取社团信息
     club = get_club_by_id(db, club_id)
     if not club:
-        raise HTTPException(status_code=404, detail="Club not found")
+        raise HTTPException(status_code=404, detail="社团未找到")
 
     # 确定增加的积分类型
     added_point = 0

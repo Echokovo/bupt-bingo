@@ -23,10 +23,12 @@ def read_sqlite(db_file):
 
         # 遍历每张表，显示前5行数据
         for table_name in tables:
+            # if str(table_name[0]) not in "user":
+            #     continue
             table = table_name[0]
             print(f"📋 表名: {table}")
             try:
-                cursor.execute(f"SELECT * FROM {table} LIMIT 5;")
+                cursor.execute(f"SELECT * FROM {table};")
                 rows = cursor.fetchall()
 
                 # 获取列名

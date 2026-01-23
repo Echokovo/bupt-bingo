@@ -24,6 +24,8 @@ def get_bingo_status(
 ):
     """获取当前Bingo状态"""
     user = get_user_by_student_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"用户未找到 请重新注册")
     # 获取用户的Bingo格子状态
     grid_status = get_user_bingo_status(db, user_id)
 
@@ -57,18 +59,19 @@ def light_bingo_grid(
     location = light_request.location
 
     user = get_user_by_student_id(db, user_id)
-
+    if not user:
+        raise HTTPException(status_code=404, detail=f"用户未找到 请重新注册")
     # 检查积分是否足够
     if point_type == "normal":
         if user.points < 1:
-            raise HTTPException(status_code=400, detail="Not enough normal points")
+            raise HTTPException(status_code=400, detail="普通积分不足")
     elif point_type == "special":
         if user.special_points < 1:
-            raise HTTPException(status_code=400, detail="Not enough special points")
+            raise HTTPException(status_code=400, detail="特殊积分不足")
         if not location or len(location) != 2:
-            raise HTTPException(status_code=400, detail="Location is required for special points")
+            raise HTTPException(status_code=400, detail="参数错误")
     else:
-        raise HTTPException(status_code=400, detail="Invalid point type")
+        raise HTTPException(status_code=400, detail="参数错误")
 
     # 确定要点亮的格子位置
     row, col = 0, 0
@@ -83,7 +86,7 @@ def light_bingo_grid(
                     unlit_cells.append((i, j))
 
         if not unlit_cells:
-            raise HTTPException(status_code=400, detail="All cells are already lit")
+            raise HTTPException(status_code=400, detail="所有格子都已点亮")
 
         # 随机选择一个未点亮的格子
         row, col = random.choice(unlit_cells)
@@ -92,7 +95,7 @@ def light_bingo_grid(
         row = location[0]
         col = location[1]
         if row < 0 or row > 4 or col < 0 or col > 4:
-            raise HTTPException(status_code=400, detail="Invalid location")
+            raise HTTPException(status_code=400, detail="位置参数错误")
 
     # 点亮格子
     set_bingo_grid_lit(db, user_id, row, col, 1)
